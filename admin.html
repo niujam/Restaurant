@@ -1,0 +1,263 @@
+<section class="page page-admin" id="page-admin">
+
+  <!-- LOGIN WALL -->
+  <div id="admin-login-wall">
+    <div class="admin-login-box">
+      <div class="admin-login-icon">🔐</div>
+      <h2 class="admin-login-title" data-i18n="adminLoginTitle">Paneli Administrativ</h2>
+      <p class="admin-login-sub" data-i18n="adminLoginSub">Aksesi i kufizuar — vetëm për pronarin.</p>
+      <div class="form-group">
+        <label class="form-label" for="adm-email">Email</label>
+        <input type="email" id="adm-email" class="form-control" autocomplete="username" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="adm-pass" data-i18n="adminPass">Fjalëkalimi</label>
+        <input type="password" id="adm-pass" class="form-control" autocomplete="current-password" />
+      </div>
+      <div id="adm-login-err" class="form-error" hidden></div>
+      <button class="btn btn-primary btn-full" id="adm-login-btn" onclick="APP.adminLogin()">
+        <span data-i18n="adminLoginBtn">Hyr në Panel</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="admin-dashboard" hidden>
+    <div class="admin-topbar">
+      <div class="admin-topbar-title">
+        <span class="admin-anchor">⚓</span>
+        <span data-i18n="adminDashTitle">Control Center — Anije Resort</span>
+      </div>
+      <div class="admin-topbar-right">
+        <span class="admin-user-email" id="adm-user-email"></span>
+        <button class="btn btn-ghost btn-sm" onclick="APP.adminLogout()">
+          <span data-i18n="adminLogout">🚪 Dil</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="admin-tabs" role="tablist">
+      <button class="admin-tab active" role="tab" aria-selected="true"  data-adm-tab="bookings" data-i18n="adminTabBookings">📋 Rezervimet</button>
+      <button class="admin-tab"        role="tab" aria-selected="false" data-adm-tab="cms"      data-i18n="adminTabCms">🍽️ Menuja (CMS)</button>
+      <button class="admin-tab"        role="tab" aria-selected="false" data-adm-tab="settings">🪑 Disponueshmëria</button>
+    </div>
+
+    <!-- BOOKINGS -->
+    <div class="admin-tab-panel active" id="adm-panel-bookings" role="tabpanel">
+      <div class="adm-panel-header">
+        <h3 data-i18n="adminBookingsTitle">Rezervimet në kohë reale</h3>
+        <div class="adm-filters">
+          <button class="cat-tab active" data-adm-filter="all"     data-i18n="filterAll">Të gjitha</button>
+          <button class="cat-tab"        data-adm-filter="pending" data-i18n="filterPending">Pritje</button>
+          <button class="cat-tab"        data-adm-filter="locked"  data-i18n="filterLocked">Bllokuar</button>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table class="bookings-table" id="adm-bookings-table">
+          <thead>
+            <tr>
+              <th data-i18n="thId">ID</th>
+              <th data-i18n="thName">Emri</th>
+              <th data-i18n="thDate">Data</th>
+              <th data-i18n="thTime">Ora</th>
+              <th data-i18n="thGuests">Persona</th>
+              <th>Vendi</th>
+              <th data-i18n="thPhone">Telefon</th>
+              <th data-i18n="thPreorder">Para-porosi</th>
+              <th data-i18n="thPin">PIN</th>
+              <th data-i18n="thStatus">Statusi</th>
+              <th data-i18n="thActions">Veprime</th>
+            </tr>
+          </thead>
+          <tbody id="adm-bookings-body">
+            <tr><td colspan="11" class="table-loading"><span class="spinner"></span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CMS -->
+    <div class="admin-tab-panel" id="adm-panel-cms" role="tabpanel" hidden>
+      <div class="adm-panel-header">
+        <h3 data-i18n="adminCmsTitle">Menaxhimi i Menusë</h3>
+        <button class="btn btn-primary btn-sm" onclick="APP.openCmsModal()" data-i18n="cmsAddBtn">+ Shto Artikull</button>
+      </div>
+      <div class="cms-grid" id="adm-cms-grid">
+        <div class="cms-loading"><span class="spinner"></span></div>
+      </div>
+    </div>
+
+    <!-- SETTINGS — DISPONUESHMËRIA TAVOLINAVE -->
+    <div class="admin-tab-panel" id="adm-panel-settings" role="tabpanel" hidden>
+      <div class="adm-panel-header">
+        <h3>🪑 Disponueshmëria e Tavolinave</h3>
+      </div>
+
+      <!-- LAJMËRIME AKTIVE -->
+      <div class="avail-announcements-bar" id="avail-active-bar" style="display:none">
+        <div class="avail-bar-inner">
+          <span class="avail-bar-icon">📢</span>
+          <span class="avail-bar-text" id="avail-bar-text"></span>
+          <button class="btn btn-sm btn-danger" onclick="APP.clearAnnouncement()">✕ Hiq</button>
+        </div>
+      </div>
+
+      <div class="settings-card">
+
+        <!-- TAVOLINA BRENDA -->
+        <div class="settings-item">
+          <div class="settings-item-info">
+            <h4>🏠 Tavolinat Brenda</h4>
+            <p>Lajmëro klientët për disponueshmërinë e tavolinave brenda restorantit.</p>
+          </div>
+          <div class="settings-item-control">
+            <label class="toggle-switch">
+              <input type="checkbox" id="toggle-brenda" onchange="APP.updateAvailability()">
+              <span class="toggle-slider"></span>
+            </label>
+            <span class="toggle-label" id="label-brenda">Të lira</span>
+          </div>
+        </div>
+
+        <!-- TAVOLINA JASHTË -->
+        <div class="settings-item">
+          <div class="settings-item-info">
+            <h4>🌅 Tavolinat Jashtë (Tarracë/Oborr)</h4>
+            <p>Lajmëro klientët për disponueshmërinë e tavolinave jashtë.</p>
+          </div>
+          <div class="settings-item-control">
+            <label class="toggle-switch">
+              <input type="checkbox" id="toggle-jashte" onchange="APP.updateAvailability()">
+              <span class="toggle-slider"></span>
+            </label>
+            <span class="toggle-label" id="label-jashte">Të lira</span>
+          </div>
+        </div>
+
+        <!-- ORARET E VEÇANTA -->
+        <div class="settings-item">
+          <div class="settings-item-info">
+            <h4>🕐 Oraret e Veçanta ose Pushim</h4>
+            <p>Shto një lajmërim për orare të veçanta, festa, pushim etj.</p>
+          </div>
+          <div class="settings-item-control" style="width:100%">
+            <textarea id="special-hours-msg" class="form-control" rows="2"
+              placeholder="p.sh. Sot punojmë deri në 22:00 · Nesër pushim · Tavolina jashtë rezervohen vetëm me telefonatë..."></textarea>
+            <button class="btn btn-sm btn-primary" style="margin-top:8px" onclick="APP.saveSpecialHours()">
+              📢 Publiko Lajmërimin
+            </button>
+          </div>
+        </div>
+
+        <!-- ORARET E BLLOKUARA -->
+        <div class="settings-item">
+          <div class="settings-item-info">
+            <h4>⛔ Blloko Orare Specifike</h4>
+            <p>Klikoni oraret që dëshironi t'i bllokoni. Klientët nuk do mund të rezervojnë atë orar.</p>
+          </div>
+          <div class="settings-item-control" style="width:100%; flex-direction:column; align-items:flex-start; gap:14px">
+            <div class="blocked-hours-grid" id="blocked-hours-grid">
+              <!-- gjenerohet nga JS -->
+            </div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:4px">
+              <button class="btn btn-sm btn-ghost" onclick="APP.clearAllBlockedHours()">🗑️ Pastro të gjitha</button>
+              <button class="btn btn-sm btn-primary" onclick="APP.saveBlockedHours()">💾 Ruaj Oraret</button>
+            </div>
+            <p style="font-size:0.75rem; color:var(--text-muted);">⛔ Oraret e kuqe nuk do të shfaqen tek klientët gjatë rezervimit.</p>
+          </div>
+        </div>
+
+        <!-- PREVIEW SE SI DUKET TE KLIENTËT -->
+        <div class="settings-preview-box" id="settings-preview">
+          <div class="settings-preview-title">👁️ Si duket te klientët:</div>
+          <div class="avail-notice" id="preview-notice">
+            <div class="avail-notice-row">
+              <span class="avail-dot avail-dot-green"></span>
+              <span>🏠 Tavolina brenda: <strong>Të lira</strong></span>
+            </div>
+            <div class="avail-notice-row">
+              <span class="avail-dot avail-dot-green"></span>
+              <span>🌅 Tavolina jashtë: <strong>Të lira</strong></span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ CMS MODAL ═══ -->
+  <div class="cms-modal-overlay" id="cms-modal" style="display:none">
+    <div class="cms-modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title" id="cms-modal-title" data-i18n="cmsModalTitle">Shto Artikull të Ri</h3>
+        <button class="modal-close" onclick="APP.closeCmsModal()" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="cms-id" />
+
+        <div class="form-row two-col">
+          <div class="form-group">
+            <label class="form-label" data-i18n="cmsNameLabel">Emri i Gjellës *</label>
+            <input type="text" id="cms-title" class="form-control" placeholder="p.sh. Tavë Kosi" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="cmsPriceLabel">Çmimi (€) *</label>
+            <input type="number" id="cms-price" class="form-control" placeholder="10" min="0" step="0.5" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" data-i18n="cmsDescLabel">Përshkrimi</label>
+          <textarea id="cms-desc" class="form-control" rows="2" placeholder="Përshkrim i shkurtër..."></textarea>
+        </div>
+
+        <div class="form-row two-col">
+          <div class="form-group">
+            <label class="form-label" data-i18n="cmsCatLabel">Kategoria</label>
+            <select id="cms-cat" class="form-control">
+              <option value="antipasta">Antipasta</option>
+              <option value="kryesore">Pjata Kryesore</option>
+              <option value="deti">Frutete Deti</option>
+              <option value="embelsira">Ëmbëlsira</option>
+              <option value="pije">Pije</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="cmsEmojiLabel">Emoji / Ikona</label>
+            <input type="text" id="cms-emoji" class="form-control" placeholder="🍖" style="font-size:1.4rem;text-align:center" />
+          </div>
+        </div>
+
+        <!-- FOTO UPLOAD -->
+        <div class="form-group">
+          <label class="form-label">📷 Foto e Gjellës (opsionale)</label>
+          <div class="img-upload-zone" id="cms-upload-zone" onclick="document.getElementById('cms-img-input').click()">
+            <div class="img-upload-placeholder" id="cms-upload-placeholder">
+              <div class="img-upload-icon">🍽️</div>
+              <div class="img-upload-text">Kliko ose zvarrit foton këtu</div>
+              <div class="img-upload-sub">JPG, PNG, WEBP · Max 5MB</div>
+            </div>
+            <div class="img-upload-preview" id="cms-upload-preview" style="display:none">
+              <img id="cms-preview-img" src="" alt="Preview" />
+              <div class="img-upload-overlay">🔄 Ndrysho foton</div>
+            </div>
+          </div>
+          <input type="file" id="cms-img-input" accept="image/*" style="display:none" onchange="APP.handleImageUpload(this)" />
+          <input type="hidden" id="cms-img" />
+          <div id="cms-remove-photo-wrap" style="display:none;margin-top:8px;text-align:center">
+            <button type="button" class="btn btn-ghost btn-sm" onclick="APP.clearImageUpload()" style="color:#ff7070;font-size:0.8rem">
+              🗑️ Hiq Foton
+            </button>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="APP.closeCmsModal()" data-i18n="cancel">Anulo</button>
+        <button class="btn btn-primary" onclick="APP.saveItem()" data-i18n="cmsSave">💾 Ruaj</button>
+      </div>
+    </div>
+  </div>
+
+</section>
